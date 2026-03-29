@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Tascálogo API - Restaurant tracker for Portugal
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: restaurants
+    description: Restaurant operations
+  - name: wishlist
+    description: Wishlist operations
 paths:
   /healthz:
     get:
@@ -24,6 +27,170 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /restaurants:
+    get:
+      operationId: listRestaurants
+      tags: [restaurants]
+      summary: List all restaurants
+      parameters:
+        - name: concelho
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by concelho
+      responses:
+        "200":
+          description: List of restaurants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Restaurant"
+    post:
+      operationId: createRestaurant
+      tags: [restaurants]
+      summary: Add a new restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRestaurant"
+      responses:
+        "201":
+          description: Restaurant created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restaurant"
+
+  /restaurants/{id}:
+    get:
+      operationId: getRestaurant
+      tags: [restaurants]
+      summary: Get a restaurant by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Restaurant details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restaurant"
+        "404":
+          description: Not found
+    put:
+      operationId: updateRestaurant
+      tags: [restaurants]
+      summary: Update a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRestaurant"
+      responses:
+        "200":
+          description: Restaurant updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restaurant"
+    delete:
+      operationId: deleteRestaurant
+      tags: [restaurants]
+      summary: Delete a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /wishlist:
+    get:
+      operationId: listWishlist
+      tags: [wishlist]
+      summary: List all wishlist entries
+      parameters:
+        - name: concelho
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by concelho
+      responses:
+        "200":
+          description: List of wishlist items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WishlistItem"
+    post:
+      operationId: createWishlistItem
+      tags: [wishlist]
+      summary: Add restaurant to wishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWishlistItem"
+      responses:
+        "201":
+          description: Wishlist item created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WishlistItem"
+
+  /wishlist/{id}:
+    delete:
+      operationId: deleteWishlistItem
+      tags: [wishlist]
+      summary: Remove from wishlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [restaurants]
+      summary: Get overall statistics
+      responses:
+        "200":
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stats"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +201,139 @@ components:
       required:
         - status
 
+    Restaurant:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        concelho:
+          type: string
+        district:
+          type: string
+        cuisine:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        notes:
+          type: string
+        visitDate:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - concelho
+        - district
+
+    CreateRestaurant:
+      type: object
+      properties:
+        name:
+          type: string
+        concelho:
+          type: string
+        district:
+          type: string
+        cuisine:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        notes:
+          type: string
+        visitDate:
+          type: string
+      required:
+        - name
+        - concelho
+        - district
+
+    WishlistItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        concelho:
+          type: string
+        district:
+          type: string
+        cuisine:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - concelho
+        - district
+
+    CreateWishlistItem:
+      type: object
+      properties:
+        name:
+          type: string
+        concelho:
+          type: string
+        district:
+          type: string
+        cuisine:
+          type: string
+        notes:
+          type: string
+      required:
+        - name
+        - concelho
+        - district
+
+    Stats:
+      type: object
+      properties:
+        totalRestaurants:
+          type: integer
+        totalConcelhos:
+          type: integer
+        totalWishlist:
+          type: integer
+        avgRating:
+          type: number
+        topCuisines:
+          type: array
+          items:
+            type: object
+            properties:
+              cuisine:
+                type: string
+              count:
+                type: integer
+            required:
+              - cuisine
+              - count
+        mostVisitedConcelhos:
+          type: array
+          items:
+            type: object
+            properties:
+              concelho:
+                type: string
+              count:
+                type: integer
+            required:
+              - concelho
+              - count
+      required:
+        - totalRestaurants
+        - totalConcelhos
+        - totalWishlist
+        - avgRating
+        - topCuisines
+        - mostVisitedConcelhos

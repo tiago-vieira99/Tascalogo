@@ -1,0 +1,19 @@
+packages:
+  "react-simple-maps": "For rendering the interactive SVG map of Portugal"
+  "recharts": "For the statistics charts"
+  "date-fns": "For date formatting and manipulation"
+  "clsx": "For conditional tailwind classes"
+  "tailwind-merge": "For conditional tailwind classes"
+  "framer-motion": "For page and modal animations"
+
+images:
+  - path: "artifacts/tascalogo/public/images/empty-plate.png"
+    description: "A beautiful, top-down illustration of a rustic ceramic plate on a warm wooden table with a sprig of olive, minimal mediterranean style"
+    aspect_ratio: "1:1"
+  - path: "artifacts/tascalogo/public/images/bistro-bg.png"
+    description: "A warm, subtle background texture resembling a painted terracotta wall in a cozy Mediterranean bistro, soft lighting"
+    aspect_ratio: "16:9"
+
+notes:
+  - Using react-simple-maps to load a public GeoJSON of Portugal's concelhos.
+  - The API client is pre-generated in @workspace/api-client-react, so we'll import hooks from there.

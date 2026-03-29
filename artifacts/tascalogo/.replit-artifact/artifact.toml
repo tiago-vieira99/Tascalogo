@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Tascálogo"
+version = "1.0.0"
+id = "artifacts/tascalogo"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19567
+
+[services.development]
+run = "pnpm --filter @workspace/tascalogo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/tascalogo", "run", "build" ]
+publicDir = "artifacts/tascalogo/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19567"
+BASE_PATH = "/"
