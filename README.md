@@ -1,6 +1,14 @@
 # Tascalogo
 
-A restaurant tracker and gastronomic diary for exploring dining experiences across Portugal.
+A restaurant tracker and gastronomic diary for exploring dining experiences across Portugal. Mark concelhos on an interactive map, log visited restaurants with ratings, and keep a wishlist of places to try.
+
+## Features
+
+- **Interactive Portugal map** — click any concelho to see or add entries
+- **Restaurant diary** — log visits with cuisine type, rating (1–5 stars), notes and date
+- **Wishlist** — save restaurants you want to try
+- **Mark as visited** — convert a wishlist item into a visited restaurant and give it a rating in one click
+- **Stats dashboard** — overview of concelhos visited, average rating, top cuisines and more
 
 ## Run locally with Docker
 
@@ -14,13 +22,9 @@ A restaurant tracker and gastronomic diary for exploring dining experiences acro
 
    - http://localhost:3000
 
-3. On the first run, apply the database schema:
+   The database schema is applied automatically on first start.
 
-   ```bash
-   docker compose exec api pnpm --filter @workspace/db run push
-   ```
-
-4. Stop the containers when you are done:
+3. Stop the containers when you are done:
 
    ```bash
    docker compose down
@@ -47,7 +51,7 @@ pnpm --filter @workspace/db run push
 
 ### Other useful commands
 
-Run codegen after changing the OpenAPI spec:
+Run codegen after changing the OpenAPI spec (`lib/api-spec/openapi.yaml`):
 
 ```bash
 pnpm --filter @workspace/api-spec run codegen
@@ -58,3 +62,14 @@ Typecheck the entire workspace:
 ```bash
 pnpm run typecheck
 ```
+
+## Tech stack
+
+| Layer     | Technology                                      |
+|-----------|-------------------------------------------------|
+| Frontend  | React 19, Vite, Tailwind CSS 4, Wouter, TanStack Query |
+| Map       | react-simple-maps + GADM GeoJSON (bundled)      |
+| Backend   | Express 5, Drizzle ORM, Zod                     |
+| Database  | PostgreSQL 16                                   |
+| API spec  | OpenAPI 3.1 + Orval codegen                     |
+| Monorepo  | pnpm workspaces                                 |
