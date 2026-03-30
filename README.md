@@ -2,30 +2,50 @@
 
 A restaurant tracker and gastronomic diary for exploring dining experiences across Portugal.
 
-## Running on Replit
+## Run locally with Docker
 
-The app runs automatically when you open the project. Two workflows start up:
+1. Start all containers (frontend, API, and database):
+
+   ```bash
+   docker compose up --build
+   ```
+
+2. Open the app in your browser:
+
+   - http://localhost:3000
+
+3. On the first run, apply the database schema:
+
+   ```bash
+   docker compose exec api pnpm --filter @workspace/db run push
+   ```
+
+4. Stop the containers when you are done:
+
+   ```bash
+   docker compose down
+   ```
+
+The database runs in its own PostgreSQL container and stores data in the
+`postgres_data` volume, so your data is kept between restarts.
+
+## Development on Replit
+
+The app runs automatically when you open the project — no Docker needed.
+Two workflows start up:
 
 - **Start application** — the React frontend (port 19567)
 - **API Server** — the Express backend (port 8080)
 
-You can see the app in the preview pane on the right.
+The preview pane on the right shows the running app.
 
-## First-time database setup
-
-If this is the first time running the project, apply the database schema:
+### First-time database setup on Replit
 
 ```bash
 pnpm --filter @workspace/db run push
 ```
 
-## Development
-
-Install dependencies (if needed):
-
-```bash
-pnpm install
-```
+### Other useful commands
 
 Run codegen after changing the OpenAPI spec:
 
