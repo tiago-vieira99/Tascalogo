@@ -8,6 +8,8 @@ WORKDIR /app
 # Copy workspace manifests first for better layer caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY artifacts/api-server/package.json artifacts/api-server/
+COPY artifacts/tascalogo/package.json artifacts/tascalogo/
+COPY artifacts/mockup-sandbox/package.json artifacts/mockup-sandbox/
 COPY lib/api-zod/package.json lib/api-zod/
 COPY lib/api-spec/package.json lib/api-spec/
 COPY lib/api-client-react/package.json lib/api-client-react/

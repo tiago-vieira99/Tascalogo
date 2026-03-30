@@ -8,12 +8,13 @@ WORKDIR /app
 # Copy workspace manifests first for better layer caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY artifacts/tascalogo/package.json artifacts/tascalogo/
+COPY artifacts/api-server/package.json artifacts/api-server/
+COPY artifacts/mockup-sandbox/package.json artifacts/mockup-sandbox/
 COPY lib/api-client-react/package.json lib/api-client-react/
 COPY lib/api-spec/package.json lib/api-spec/
 COPY lib/api-zod/package.json lib/api-zod/
 COPY lib/db/package.json lib/db/
 COPY scripts/package.json scripts/
-COPY artifacts/api-server/package.json artifacts/api-server/
 
 RUN pnpm install --frozen-lockfile
 
