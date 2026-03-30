@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: artifacts/tascalogo/Dockerfile
+      platforms:
+        - linux/amd64
     ports:
       - "3000:80"
     depends_on:
@@ -12,6 +14,8 @@ services:
     build:
       context: .
       dockerfile: artifacts/api-server/Dockerfile
+      platforms:
+        - linux/amd64
     environment:
       PORT: "3001"
       DATABASE_URL: postgresql://tascalogo:tascalogo_password@db:5432/tascalogo
