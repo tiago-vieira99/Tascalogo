@@ -1,0 +1,64 @@
+------                                                                                                                                                                                                                                                                         
+ > [web builder 20/20] RUN PORT=3000 BASE_PATH=/ pnpm run build:                                                                                                                                                                                                               
+0.511 
+0.511 > @workspace/tascalogo@0.0.0 build /app/artifacts/tascalogo
+0.511 > vite build --config vite.config.ts
+0.511 
+0.637 /app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js:115
+0.637 		throw new Error(
+0.637 		      ^
+0.637 
+0.637 Error: Cannot find module @rollup/rollup-linux-arm64-musl. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+0.637     at requireWithFriendlyError (/app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js:115:9)
+0.637     at Object.<anonymous> (/app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js:124:76)
+0.637     at Module._compile (node:internal/modules/cjs/loader:1812:14)
+0.637     at Object..js (node:internal/modules/cjs/loader:1943:10)
+0.637     at Module.load (node:internal/modules/cjs/loader:1533:32)
+0.637     at Module._load (node:internal/modules/cjs/loader:1335:12)
+0.637     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+0.637     at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:328:3)
+0.637     at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:233:7)
+0.637     at ModuleJob.run (node:internal/modules/esm/module_job:430:25) {
+0.637   [cause]: Error: Cannot find module '@rollup/rollup-linux-arm64-musl'
+0.637   Require stack:
+0.637   - /app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js
+0.637       at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+0.637       at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+0.637       at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+0.637       at Module._load (node:internal/modules/cjs/loader:1242:25)
+0.637       at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+0.637       at Module.require (node:internal/modules/cjs/loader:1556:12)
+0.637       at require (node:internal/modules/helpers:152:16)
+0.637       at requireWithFriendlyError (/app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js:97:10)
+0.637       at Object.<anonymous> (/app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js:124:76)
+0.637       at Module._compile (node:internal/modules/cjs/loader:1812:14) {
+0.637     code: 'MODULE_NOT_FOUND',
+0.637     requireStack: [
+0.637       '/app/node_modules/.pnpm/rollup@4.59.0/node_modules/rollup/dist/native.js'
+0.637     ]
+0.637   }
+0.637 }
+0.637 
+0.637 Node.js v24.14.1
+0.654  ELIFECYCLE  Command failed with exit code 1.
+------
+[+] up 0/2
+ ⠙ Image tascalogo-web Building                                                                                                                                                                                                                                           21.7s
+ ⠙ Image tascalogo-api Building                                                                                                                                                                                                                                           21.7s
+Dockerfile:32
+
+--------------------
+
+  30 |     # BASE_PATH sets the base URL prefix for the app
+
+  31 |     WORKDIR /app/artifacts/tascalogo
+
+  32 | >>> RUN PORT=3000 BASE_PATH=/ pnpm run build
+
+  33 |     
+
+  34 |     # Stage 2: Production — serve with nginx
+
+--------------------
+
+target web: failed to solve: process "/bin/sh -c PORT=3000 BASE_PATH=/ pnpm run build" did not complete successfully: exit code: 1

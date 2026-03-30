@@ -16,7 +16,7 @@ COPY lib/api-zod/package.json lib/api-zod/
 COPY lib/db/package.json lib/db/
 COPY scripts/package.json scripts/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Copy source code
 COPY tsconfig.base.json tsconfig.json ./
