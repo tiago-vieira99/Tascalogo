@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { useListRestaurants, useListWishlist } from "@workspace/api-client-react";
 
@@ -16,7 +16,7 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
   // Calculate stats per concelho to drive map colors
   const concelhoStats = useMemo(() => {
     const stats: Record<string, { visited: number, wishlist: number }> = {};
-    
+
     restaurants?.forEach(r => {
       const c = r.concelho.toUpperCase();
       if (!stats[c]) stats[c] = { visited: 0, wishlist: 0 };
@@ -50,7 +50,7 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
                 const normalizedName = concelhoName?.toUpperCase() || "";
                 const stats = concelhoStats[normalizedName];
                 const isSelected = selectedConcelho?.toUpperCase() === normalizedName;
-                
+
                 // Determine fill color
                 let fill = "hsl(var(--card))";
                 let stroke = "hsl(var(--border))";
@@ -102,7 +102,7 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
           </Geographies>
         </ZoomableGroup>
       </ComposableMap>
-      
+
       <div className="absolute bottom-6 left-6 glass-panel px-4 py-3 rounded-xl flex flex-col gap-2 text-xs font-medium">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-sm bg-primary opacity-80 border border-primary"></div>
