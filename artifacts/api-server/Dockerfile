@@ -16,7 +16,8 @@ COPY lib/api-client-react/package.json lib/api-client-react/
 COPY lib/db/package.json lib/db/
 COPY scripts/package.json scripts/
 
-RUN pnpm install --no-frozen-lockfile
+RUN rm -rf node_modules pnpm-lock.yaml && \
+    pnpm install --no-frozen-lockfile --force
 
 # Copy source code
 COPY tsconfig.base.json tsconfig.json ./
