@@ -6,7 +6,7 @@ RUN corepack enable && corepack prepare pnpm@10.26.1 --activate
 WORKDIR /app
 
 # Copy workspace manifests first for better layer caching
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY package.json pnpm-workspace.yaml .npmrc ./
 COPY artifacts/api-server/package.json artifacts/api-server/
 COPY artifacts/tascalogo/package.json artifacts/tascalogo/
 COPY artifacts/mockup-sandbox/package.json artifacts/mockup-sandbox/
