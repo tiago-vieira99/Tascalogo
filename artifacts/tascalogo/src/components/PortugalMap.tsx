@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { useListRestaurants, useListWishlist } from "@workspace/api-client-react";
 
-const GEO_URL = "https://raw.githubusercontent.com/dssg-pt/mp-cartografia/master/concelhos.geojson";
+const GEO_URL = "/concelhos.geojson";
 
 interface PortugalMapProps {
   selectedConcelho: string | null;
