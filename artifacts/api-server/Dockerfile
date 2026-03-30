@@ -32,7 +32,8 @@ RUN node ./build.mjs
 # Stage 2: Production runtime
 FROM node:24-alpine
 
-WORKDIR /app
+# Use the same path as the build so esbuild's baked-in worker paths resolve correctly
+WORKDIR /app/artifacts/api-server
 
 COPY --from=builder /app/artifacts/api-server/dist ./dist
 
