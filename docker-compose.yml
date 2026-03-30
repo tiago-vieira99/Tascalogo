@@ -1,0 +1,35 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: artifacts/tascalogo/Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: artifacts/api-server/Dockerfile
+    environment:
+      PORT: "3001"
+      DATABASE_URL: postgresql://tascalogo:tascalogo_password@db:5432/tascalogo
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: tascalogo
+      POSTGRES_USER: tascalogo
+      POSTGRES_PASSWORD: tascalogo_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
