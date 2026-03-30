@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PortugalMap } from "@/components/PortugalMap";
 import { Modal } from "@/components/ui/modal";
 import { RestaurantForm, WishlistForm } from "@/components/Forms";
@@ -17,7 +17,7 @@ export function Home() {
 
   const { data: restaurants } = useListRestaurants({ concelho: selectedConcelho || undefined });
   const { data: wishlist } = useListWishlist({ concelho: selectedConcelho || undefined });
-  
+
   const deleteRestaurant = useDeleteRestaurant();
   const deleteWishlist = useDeleteWishlistItem();
   const queryClient = useQueryClient();
@@ -47,18 +47,17 @@ export function Home() {
           <h2 className="text-3xl font-serif font-bold text-foreground">O Meu Mapa</h2>
           <p className="text-muted-foreground mt-1 text-lg">Clica num concelho para ver ou adicionar restaurantes.</p>
         </header>
-        <PortugalMap 
-          selectedConcelho={selectedConcelho} 
-          onSelectConcelho={setSelectedConcelho} 
+        <PortugalMap
+          selectedConcelho={selectedConcelho}
+          onSelectConcelho={setSelectedConcelho}
         />
       </div>
 
       <div className="w-full xl:w-1/3 flex flex-col">
         {selectedConcelho ? (
           <div className="bg-card border border-border/50 shadow-xl rounded-3xl p-6 h-full flex flex-col overflow-hidden relative">
-            
             <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-primary/10 to-accent/20 rounded-t-3xl border-b border-border/50"></div>
-            
+
             <div className="relative z-10 mb-8 pt-4">
               <div className="inline-flex items-center justify-center p-3 bg-background shadow-sm border border-border rounded-2xl mb-4">
                 <MapPin className="w-6 h-6 text-primary" />
@@ -97,7 +96,7 @@ export function Home() {
                             </button>
                           </div>
                         </div>
-                        
+
                         <div className="flex flex-wrap gap-2 mb-3">
                           {r.cuisine && <span className="text-xs px-2 py-1 bg-accent/50 rounded-md font-medium">{r.cuisine}</span>}
                           {r.rating && (
@@ -106,13 +105,13 @@ export function Home() {
                             </span>
                           )}
                         </div>
-                        
+
                         {r.notes && <p className="text-sm text-foreground/80 bg-muted/30 p-3 rounded-lg mb-3 italic">"{r.notes}"</p>}
-                        
+
                         {r.visitDate && (
                           <div className="text-xs text-muted-foreground flex items-center">
                             <Calendar className="w-3 h-3 mr-1" />
-                            {new Date(r.visitDate).toLocaleDateString('pt-PT')}
+                            {new Date(r.visitDate).toLocaleDateString("pt-PT")}
                           </div>
                         )}
                       </Card>
@@ -159,26 +158,26 @@ export function Home() {
       </div>
 
       {/* Modals */}
-      <Modal 
-        isOpen={isRestaurantModalOpen} 
-        onClose={() => { setIsRestaurantModalOpen(false); setEditingRestaurant(null); }} 
+      <Modal
+        isOpen={isRestaurantModalOpen}
+        onClose={() => { setIsRestaurantModalOpen(false); setEditingRestaurant(null); }}
         title={editingRestaurant ? "Editar Restaurante" : "Registar Visita"}
       >
-        <RestaurantForm 
+        <RestaurantForm
           initialData={editingRestaurant}
-          defaultConcelho={selectedConcelho || ""} 
-          onSuccess={() => { setIsRestaurantModalOpen(false); setEditingRestaurant(null); }} 
+          defaultConcelho={selectedConcelho || ""}
+          onSuccess={() => { setIsRestaurantModalOpen(false); setEditingRestaurant(null); }}
         />
       </Modal>
 
-      <Modal 
-        isOpen={isWishlistModalOpen} 
-        onClose={() => setIsWishlistModalOpen(false)} 
+      <Modal
+        isOpen={isWishlistModalOpen}
+        onClose={() => setIsWishlistModalOpen(false)}
         title="Adicionar à Wishlist"
       >
-        <WishlistForm 
-          defaultConcelho={selectedConcelho || ""} 
-          onSuccess={() => setIsWishlistModalOpen(false)} 
+        <WishlistForm
+          defaultConcelho={selectedConcelho || ""}
+          onSuccess={() => setIsWishlistModalOpen(false)}
         />
       </Modal>
     </div>
