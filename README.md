@@ -1,28 +1,40 @@
 # Tascalogo
 
-## Run with Docker
+A restaurant tracker and gastronomic diary for exploring dining experiences across Portugal.
 
-1. Start the containers:
+## Running on Replit
 
-   ```bash
-   docker compose up --build
-   ```
+The app runs automatically when you open the project. Two workflows start up:
 
-2. Open the app in your browser:
+- **Start application** — the React frontend (port 19567)
+- **API Server** — the Express backend (port 8080)
 
-   - http://localhost:3000
+You can see the app in the preview pane on the right.
 
-3. If this is the first time running the project, apply the database schema:
+## First-time database setup
 
-   ```bash
-   docker compose exec api pnpm --filter @workspace/db run push
-   ```
+If this is the first time running the project, apply the database schema:
 
-4. Stop the containers when you are done:
+```bash
+pnpm --filter @workspace/db run push
+```
 
-   ```bash
-   docker compose down
-   ```
+## Development
 
-The database runs in its own PostgreSQL container and stores data in the
-`postgres_data` volume, so your information is kept between restarts.
+Install dependencies (if needed):
+
+```bash
+pnpm install
+```
+
+Run codegen after changing the OpenAPI spec:
+
+```bash
+pnpm --filter @workspace/api-spec run codegen
+```
+
+Typecheck the entire workspace:
+
+```bash
+pnpm run typecheck
+```
