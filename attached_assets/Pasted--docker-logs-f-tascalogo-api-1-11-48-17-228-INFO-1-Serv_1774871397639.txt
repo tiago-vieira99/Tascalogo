@@ -1,0 +1,54 @@
+ docker logs -f tascalogo-api-1 
+[11:48:17.228] INFO (1): Server listening
+    port: 3001
+
+
+[11:48:36.620] ERROR (1): Error listing restaurants
+    req: {
+      "id": 1,
+      "method": "GET",
+      "url": "/api/restaurants"
+    }
+    err: {
+      "type": "_DrizzleQueryError",
+      "message": "Failed query: select \"id\", \"name\", \"concelho\", \"district\", \"cuisine\", \"rating\", \"notes\", \"visit_date\", \"created_at\" from \"restaurants\"\nparams: : relation \"restaurants\" does not exist",
+      "stack":
+          Error: Failed query: select "id", "name", "concelho", "district", "cuisine", "rating", "notes", "visit_date", "created_at" from "restaurants"
+          params: 
+              at NodePgPreparedQuery.queryWithCache (/app/node_modules/src/pg-core/session.ts:73:11)
+              at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+              at async <anonymous> (/app/node_modules/src/node-postgres/session.ts:154:19)
+              at async <anonymous> (/app/artifacts/api-server/src/routes/restaurants.ts:11:21)
+          caused by: error: relation "restaurants" does not exist
+              at <anonymous> (/app/node_modules/pg-pool/index.js:45:11)
+              at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+              at async <anonymous> (/app/node_modules/src/node-postgres/session.ts:161:13)
+              at async NodePgPreparedQuery.queryWithCache (/app/node_modules/src/pg-core/session.ts:71:12)
+              at async <anonymous> (/app/node_modules/src/node-postgres/session.ts:154:19)
+              at async <anonymous> (/app/artifacts/api-server/src/routes/restaurants.ts:11:21)
+      "query": "select \"id\", \"name\", \"concelho\", \"district\", \"cuisine\", \"rating\", \"notes\", \"visit_date\", \"created_at\" from \"restaurants\"",
+      "params": []
+    }
+[11:48:36.888] INFO (1): request errored
+    req: {
+      "id": 1,
+      "method": "GET",
+      "url": "/api/restaurants"
+    }
+    res: {
+      "statusCode": 500
+    }
+    responseTime: 483
+    err: {
+      "type": "Error",
+      "message": "failed with status code 500",
+      "stack":
+          Error: failed with status code 500
+              at onResFinished (/app/node_modules/pino-http/logger.js:115:39)
+              at ServerResponse.onResponseComplete (/app/node_modules/pino-http/logger.js:178:14)
+              at ServerResponse.emit (node:events:520:35)
+              at onFinish (node:_http_outgoing:1026:10)
+              at callback (node:internal/streams/writable:764:21)
+              at afterWrite (node:internal/streams/writable:708:5)
+              at afterWriteTick (node:internal/streams/writable:694:10)
+              at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
