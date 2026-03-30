@@ -4,8 +4,8 @@ import { Modal } from "@/components/ui/modal";
 import { RestaurantForm, WishlistForm } from "@/components/Forms";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, MapPin, Calendar, Trash2, Edit } from "lucide-react";
-import { useListRestaurants, useListWishlist, useDeleteRestaurant, useDeleteWishlistItem } from "@workspace/api-client-react";
+import { Star, MapPin, Calendar, Trash2, Edit, CheckCircle2, X } from "lucide-react";
+import { useListRestaurants, useListWishlist, useDeleteRestaurant, useDeleteWishlistItem, useMarkWishlistItemVisited } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getListRestaurantsQueryKey, getListWishlistQueryKey } from "@workspace/api-client-react";
 
@@ -14,12 +14,16 @@ export function Home() {
   const [isRestaurantModalOpen, setIsRestaurantModalOpen] = useState(false);
   const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
+  const [markingVisitedId, setMarkingVisitedId] = useState<number | null>(null);
+  const [visitRating, setVisitRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
 
   const { data: restaurants } = useListRestaurants({ concelho: selectedConcelho || undefined });
   const { data: wishlist } = useListWishlist({ concelho: selectedConcelho || undefined });
 
   const deleteRestaurant = useDeleteRestaurant();
   const deleteWishlist = useDeleteWishlistItem();
+  const markVisited = useMarkWishlistItemVisited();
   const queryClient = useQueryClient();
 
   // If no concelho is selected, the API fetches ALL, but we only want to show the list if a concelho is selected in the sidebar.
@@ -38,6 +42,21 @@ export function Home() {
       await deleteWishlist.mutateAsync({ id });
       queryClient.invalidateQueries({ queryKey: getListWishlistQueryKey() });
     }
+  };
+
+  const handleMarkVisited = async (id: number) => {
+    await markVisited.mutateAsync({ id, data: { rating: visitRating || undefined } });
+    queryClient.invalidateQueries({ queryKey: getListRestaurantsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getListWishlistQueryKey() });
+    setMarkingVisitedId(null);
+    setVisitRating(0);
+    setHoverRating(0);
+  };
+
+  const openMarkVisited = (id: number) => {
+    setMarkingVisitedId(id);
+    setVisitRating(0);
+    setHoverRating(0);
   };
 
   return (
@@ -130,7 +149,7 @@ export function Home() {
                 ) : (
                   <div className="space-y-4">
                     {concelhoWishlist.map(w => (
-                      <Card key={w.id} className="p-4 border-dashed border-2 opacity-80 hover:opacity-100 group">
+                      <Card key={w.id} className="p-4 border-dashed border-2 opacity-80 hover:opacity-100 group transition-all">
                         <div className="flex justify-between items-start mb-2">
                           <h5 className="font-serif font-bold text-lg leading-tight">{w.name}</h5>
                           <button onClick={() => handleDeleteWishlist(w.id)} className="text-muted-foreground hover:text-destructive p-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -138,7 +157,60 @@ export function Home() {
                           </button>
                         </div>
                         {w.cuisine && <span className="text-xs px-2 py-1 bg-accent/50 rounded-md font-medium inline-block mb-2">{w.cuisine}</span>}
-                        {w.notes && <p className="text-sm text-foreground/70">{w.notes}</p>}
+                        {w.notes && <p className="text-sm text-foreground/70 mb-3">{w.notes}</p>}
+
+                        {markingVisitedId === w.id ? (
+                          <div className="mt-3 pt-3 border-t border-border/50">
+                            <p className="text-xs font-semibold text-muted-foreground mb-2">Dá uma pontuação (opcional):</p>
+                            <div className="flex items-center gap-1 mb-3">
+                              {[1, 2, 3, 4, 5].map(star => (
+                                <button
+                                  key={star}
+                                  onClick={() => setVisitRating(star === visitRating ? 0 : star)}
+                                  onMouseEnter={() => setHoverRating(star)}
+                                  onMouseLeave={() => setHoverRating(0)}
+                                  className="transition-transform hover:scale-110"
+                                >
+                                  <Star
+                                    className={`w-6 h-6 transition-colors ${
+                                      star <= (hoverRating || visitRating)
+                                        ? "fill-yellow-400 text-yellow-400"
+                                        : "text-muted-foreground/40"
+                                    }`}
+                                  />
+                                </button>
+                              ))}
+                              {visitRating > 0 && (
+                                <span className="text-xs text-muted-foreground ml-1">{visitRating}/5</span>
+                              )}
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                className="flex-1 gap-1"
+                                onClick={() => handleMarkVisited(w.id)}
+                                disabled={markVisited.isPending}
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                {markVisited.isPending ? "A guardar..." : "Confirmar visita"}
+                              </Button>
+                              <button
+                                onClick={() => setMarkingVisitedId(null)}
+                                className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted/50 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => openMarkVisited(w.id)}
+                            className="mt-2 w-full text-xs font-medium text-primary border border-primary/30 rounded-lg py-1.5 hover:bg-primary/10 transition-colors flex items-center justify-center gap-1.5"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Já visitei!
+                          </button>
+                        )}
                       </Card>
                     ))}
                   </div>

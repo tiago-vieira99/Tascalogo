@@ -49,6 +49,16 @@ export interface WishlistItem {
   createdAt?: string;
 }
 
+export interface MarkVisitedBody {
+  /**
+   * @minimum 1
+   * @maximum 5
+   */
+  rating?: number;
+  notes?: string;
+  visitDate?: string;
+}
+
 export interface CreateWishlistItem {
   name: string;
   concelho: string;

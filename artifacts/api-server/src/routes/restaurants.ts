@@ -191,6 +191,41 @@ router.delete("/wishlist/:id", async (req, res) => {
   }
 });
 
+router.post("/wishlist/:id/mark-visited", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const [item] = await db.select().from(wishlistTable).where(eq(wishlistTable.id, id));
+    if (!item) {
+      return res.status(404).json({ error: "Wishlist item not found" });
+    }
+    const { rating, notes, visitDate } = req.body;
+    const [created] = await db.insert(restaurantsTable).values({
+      name: item.name,
+      concelho: item.concelho,
+      district: item.district,
+      cuisine: item.cuisine || null,
+      rating: rating ? Number(rating) : null,
+      notes: notes || item.notes || null,
+      visitDate: visitDate || null,
+    }).returning();
+    await db.delete(wishlistTable).where(eq(wishlistTable.id, id));
+    res.status(201).json({
+      id: created.id,
+      name: created.name,
+      concelho: created.concelho,
+      district: created.district,
+      cuisine: created.cuisine ?? undefined,
+      rating: created.rating ?? undefined,
+      notes: created.notes ?? undefined,
+      visitDate: created.visitDate ?? undefined,
+      createdAt: created.createdAt.toISOString(),
+    });
+  } catch (err) {
+    req.log.error({ err }, "Error marking wishlist item as visited");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/stats", async (req, res) => {
   try {
     const restaurants = await db.select().from(restaurantsTable);

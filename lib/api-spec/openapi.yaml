@@ -178,6 +178,34 @@ paths:
         "204":
           description: Deleted
 
+  /wishlist/{id}/mark-visited:
+    post:
+      operationId: markWishlistItemVisited
+      tags: [wishlist]
+      summary: Mark wishlist item as visited
+      description: Creates a restaurant entry from the wishlist item and removes it from the wishlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkVisitedBody"
+      responses:
+        "201":
+          description: Restaurant created from wishlist item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restaurant"
+        "404":
+          description: Wishlist item not found
+
   /stats:
     get:
       operationId: getStats
@@ -276,6 +304,18 @@ components:
         - name
         - concelho
         - district
+
+    MarkVisitedBody:
+      type: object
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        notes:
+          type: string
+        visitDate:
+          type: string
 
     CreateWishlistItem:
       type: object

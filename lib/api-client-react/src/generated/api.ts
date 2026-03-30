@@ -22,6 +22,7 @@ import type {
   HealthStatus,
   ListRestaurantsParams,
   ListWishlistParams,
+  MarkVisitedBody,
   Restaurant,
   Stats,
   WishlistItem,
@@ -812,6 +813,94 @@ export const useDeleteWishlistItem = <
   TContext
 > => {
   return useMutation(getDeleteWishlistItemMutationOptions(options));
+};
+
+/**
+ * Creates a restaurant entry from the wishlist item and removes it from the wishlist
+ * @summary Mark wishlist item as visited
+ */
+export const getMarkWishlistItemVisitedUrl = (id: number) => {
+  return `/api/wishlist/${id}/mark-visited`;
+};
+
+export const markWishlistItemVisited = async (
+  id: number,
+  markVisitedBody: MarkVisitedBody,
+  options?: RequestInit,
+): Promise<Restaurant> => {
+  return customFetch<Restaurant>(getMarkWishlistItemVisitedUrl(id), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(markVisitedBody),
+  });
+};
+
+export const getMarkWishlistItemVisitedMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markWishlistItemVisited>>,
+    TError,
+    { id: number; data: BodyType<MarkVisitedBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markWishlistItemVisited>>,
+  TError,
+  { id: number; data: BodyType<MarkVisitedBody> },
+  TContext
+> => {
+  const mutationKey = ["markWishlistItemVisited"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markWishlistItemVisited>>,
+    { id: number; data: BodyType<MarkVisitedBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return markWishlistItemVisited(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MarkWishlistItemVisitedMutationResult = NonNullable<
+  Awaited<ReturnType<typeof markWishlistItemVisited>>
+>;
+export type MarkWishlistItemVisitedMutationBody = BodyType<MarkVisitedBody>;
+export type MarkWishlistItemVisitedMutationError = ErrorType<void>;
+
+/**
+ * @summary Mark wishlist item as visited
+ */
+export const useMarkWishlistItemVisited = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markWishlistItemVisited>>,
+    TError,
+    { id: number; data: BodyType<MarkVisitedBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof markWishlistItemVisited>>,
+  TError,
+  { id: number; data: BodyType<MarkVisitedBody> },
+  TContext
+> => {
+  return useMutation(getMarkWishlistItemVisitedMutationOptions(options));
 };
 
 /**

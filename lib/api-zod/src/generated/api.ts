@@ -150,6 +150,26 @@ export const DeleteWishlistItemParams = zod.object({
 });
 
 /**
+ * Creates a restaurant entry from the wishlist item and removes it from the wishlist
+ * @summary Mark wishlist item as visited
+ */
+export const MarkWishlistItemVisitedParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const markWishlistItemVisitedBodyRatingMax = 5;
+
+export const MarkWishlistItemVisitedBody = zod.object({
+  rating: zod
+    .number()
+    .min(1)
+    .max(markWishlistItemVisitedBodyRatingMax)
+    .optional(),
+  notes: zod.string().optional(),
+  visitDate: zod.string().optional(),
+});
+
+/**
  * @summary Get overall statistics
  */
 export const GetStatsResponse = zod.object({

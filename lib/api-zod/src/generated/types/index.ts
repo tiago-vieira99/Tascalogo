@@ -11,6 +11,7 @@ export * from "./createWishlistItem";
 export * from "./healthStatus";
 export * from "./listRestaurantsParams";
 export * from "./listWishlistParams";
+export * from "./markVisitedBody";
 export * from "./restaurant";
 export * from "./stats";
 export * from "./statsMostVisitedConcelhosItem";
