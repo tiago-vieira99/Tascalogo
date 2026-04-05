@@ -8,13 +8,9 @@ import { Directory } from "@/pages/Directory";
 import { Wishlist } from "@/pages/Wishlist";
 import { Stats } from "@/pages/Stats";
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined;
 const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-if (!clerkPubKey) {
-  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY");
-}
 
 function stripBase(path: string): string {
   return basePath && path.startsWith(basePath)
@@ -130,7 +126,7 @@ function ClerkProviderWithRoutes() {
 
   return (
     <ClerkProvider
-      publishableKey={clerkPubKey}
+      publishableKey={clerkPubKey!}
       proxyUrl={clerkProxyUrl}
       routerPush={(to) => setLocation(stripBase(to))}
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
@@ -157,7 +153,28 @@ function ClerkProviderWithRoutes() {
   );
 }
 
+function MissingConfig() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="text-center max-w-md">
+        <h1 className="text-4xl font-serif font-bold text-foreground mb-4">Tascálogo</h1>
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
+          <p className="text-destructive font-semibold mb-2">Configuração em falta</p>
+          <p className="text-sm text-muted-foreground">
+            A variável <code className="font-mono bg-muted px-1 rounded">VITE_CLERK_PUBLISHABLE_KEY</code> não está definida.
+            Certifica-te de que o ficheiro <code className="font-mono bg-muted px-1 rounded">.env</code> está correto e que a app foi compilada com essa variável disponível.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
+  if (!clerkPubKey) {
+    return <MissingConfig />;
+  }
+
   return (
     <WouterRouter base={basePath}>
       <ClerkProviderWithRoutes />
