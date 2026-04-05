@@ -1,16 +1,27 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
+import { getAuth } from "@clerk/express";
 import { db, restaurantsTable, wishlistTable } from "@workspace/db";
-import { eq, sql } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-router.get("/restaurants", async (req, res) => {
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const auth = getAuth(req);
+  const userId = auth?.userId;
+  if (!userId) {
+    return res.status(401).json({ error: "Não autorizado" });
+  }
+  (req as any).userId = userId;
+  next();
+}
+
+router.get("/restaurants", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const { concelho } = req.query as { concelho?: string };
-    let query = db.select().from(restaurantsTable);
     const results = await (concelho
-      ? db.select().from(restaurantsTable).where(eq(restaurantsTable.concelho, concelho))
-      : db.select().from(restaurantsTable));
+      ? db.select().from(restaurantsTable).where(and(eq(restaurantsTable.userId, userId), eq(restaurantsTable.concelho, concelho)))
+      : db.select().from(restaurantsTable).where(eq(restaurantsTable.userId, userId)));
     res.json(results.map(r => ({
       id: r.id,
       name: r.name,
@@ -24,17 +35,19 @@ router.get("/restaurants", async (req, res) => {
     })));
   } catch (err) {
     req.log.error({ err }, "Error listing restaurants");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.post("/restaurants", async (req, res) => {
+router.post("/restaurants", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const { name, concelho, district, cuisine, rating, notes, visitDate } = req.body;
     if (!name || !concelho || !district) {
-      return res.status(400).json({ error: "name, concelho and district are required" });
+      return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
     }
     const [created] = await db.insert(restaurantsTable).values({
+      userId,
       name,
       concelho,
       district,
@@ -56,16 +69,17 @@ router.post("/restaurants", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Error creating restaurant");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.get("/restaurants/:id", async (req, res) => {
+router.get("/restaurants/:id", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const id = Number(req.params.id);
-    const [restaurant] = await db.select().from(restaurantsTable).where(eq(restaurantsTable.id, id));
+    const [restaurant] = await db.select().from(restaurantsTable).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId)));
     if (!restaurant) {
-      return res.status(404).json({ error: "Not found" });
+      return res.status(404).json({ error: "Não encontrado" });
     }
     res.json({
       id: restaurant.id,
@@ -80,16 +94,17 @@ router.get("/restaurants/:id", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Error getting restaurant");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.put("/restaurants/:id", async (req, res) => {
+router.put("/restaurants/:id", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const id = Number(req.params.id);
     const { name, concelho, district, cuisine, rating, notes, visitDate } = req.body;
     if (!name || !concelho || !district) {
-      return res.status(400).json({ error: "name, concelho and district are required" });
+      return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
     }
     const [updated] = await db.update(restaurantsTable).set({
       name,
@@ -99,9 +114,9 @@ router.put("/restaurants/:id", async (req, res) => {
       rating: rating ? Number(rating) : null,
       notes: notes || null,
       visitDate: visitDate || null,
-    }).where(eq(restaurantsTable.id, id)).returning();
+    }).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId))).returning();
     if (!updated) {
-      return res.status(404).json({ error: "Not found" });
+      return res.status(404).json({ error: "Não encontrado" });
     }
     res.json({
       id: updated.id,
@@ -116,27 +131,29 @@ router.put("/restaurants/:id", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Error updating restaurant");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.delete("/restaurants/:id", async (req, res) => {
+router.delete("/restaurants/:id", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const id = Number(req.params.id);
-    await db.delete(restaurantsTable).where(eq(restaurantsTable.id, id));
+    await db.delete(restaurantsTable).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId)));
     res.status(204).send();
   } catch (err) {
     req.log.error({ err }, "Error deleting restaurant");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.get("/wishlist", async (req, res) => {
+router.get("/wishlist", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const { concelho } = req.query as { concelho?: string };
     const results = await (concelho
-      ? db.select().from(wishlistTable).where(eq(wishlistTable.concelho, concelho))
-      : db.select().from(wishlistTable));
+      ? db.select().from(wishlistTable).where(and(eq(wishlistTable.userId, userId), eq(wishlistTable.concelho, concelho)))
+      : db.select().from(wishlistTable).where(eq(wishlistTable.userId, userId)));
     res.json(results.map(r => ({
       id: r.id,
       name: r.name,
@@ -148,17 +165,19 @@ router.get("/wishlist", async (req, res) => {
     })));
   } catch (err) {
     req.log.error({ err }, "Error listing wishlist");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.post("/wishlist", async (req, res) => {
+router.post("/wishlist", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const { name, concelho, district, cuisine, notes } = req.body;
     if (!name || !concelho || !district) {
-      return res.status(400).json({ error: "name, concelho and district are required" });
+      return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
     }
     const [created] = await db.insert(wishlistTable).values({
+      userId,
       name,
       concelho,
       district,
@@ -176,60 +195,27 @@ router.post("/wishlist", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Error creating wishlist item");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.delete("/wishlist/:id", async (req, res) => {
+router.delete("/wishlist/:id", requireAuth, async (req, res) => {
   try {
+    const userId = (req as any).userId as string;
     const id = Number(req.params.id);
-    await db.delete(wishlistTable).where(eq(wishlistTable.id, id));
+    await db.delete(wishlistTable).where(and(eq(wishlistTable.id, id), eq(wishlistTable.userId, userId)));
     res.status(204).send();
   } catch (err) {
     req.log.error({ err }, "Error deleting wishlist item");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
-router.post("/wishlist/:id/mark-visited", async (req, res) => {
+router.get("/stats", requireAuth, async (req, res) => {
   try {
-    const id = Number(req.params.id);
-    const [item] = await db.select().from(wishlistTable).where(eq(wishlistTable.id, id));
-    if (!item) {
-      return res.status(404).json({ error: "Wishlist item not found" });
-    }
-    const { rating, notes, visitDate } = req.body;
-    const [created] = await db.insert(restaurantsTable).values({
-      name: item.name,
-      concelho: item.concelho,
-      district: item.district,
-      cuisine: item.cuisine || null,
-      rating: rating ? Number(rating) : null,
-      notes: notes || item.notes || null,
-      visitDate: visitDate || null,
-    }).returning();
-    await db.delete(wishlistTable).where(eq(wishlistTable.id, id));
-    res.status(201).json({
-      id: created.id,
-      name: created.name,
-      concelho: created.concelho,
-      district: created.district,
-      cuisine: created.cuisine ?? undefined,
-      rating: created.rating ?? undefined,
-      notes: created.notes ?? undefined,
-      visitDate: created.visitDate ?? undefined,
-      createdAt: created.createdAt.toISOString(),
-    });
-  } catch (err) {
-    req.log.error({ err }, "Error marking wishlist item as visited");
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-router.get("/stats", async (req, res) => {
-  try {
-    const restaurants = await db.select().from(restaurantsTable);
-    const wishlist = await db.select().from(wishlistTable);
+    const userId = (req as any).userId as string;
+    const restaurants = await db.select().from(restaurantsTable).where(eq(restaurantsTable.userId, userId));
+    const wishlist = await db.select().from(wishlistTable).where(eq(wishlistTable.userId, userId));
 
     const totalRestaurants = restaurants.length;
     const totalWishlist = wishlist.length;
@@ -270,7 +256,7 @@ router.get("/stats", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Error getting stats");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Erro interno" });
   }
 });
 
