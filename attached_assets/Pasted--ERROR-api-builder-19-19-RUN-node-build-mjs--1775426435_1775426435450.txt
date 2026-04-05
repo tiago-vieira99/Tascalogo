@@ -1,0 +1,41 @@
+=> ERROR [api builder 19/19] RUN node ./build.mjs                                                                                                                                                                                      1.0s
+------                                                                                                                                                                                                                                       
+ > [api builder 19/19] RUN node ./build.mjs:                                                                                                                                                                                                 
+0.642 ✘ [ERROR] Could not resolve "@clerk/express"                                                                                                                                                                                           
+0.642                                                                                                                                                                                                                                        
+0.642     src/app.ts:4:32:                                                                                                                                                                                                                   
+0.642       4 │ import { clerkMiddleware } from "@clerk/express";                                                                                                                                                                            
+0.642         ╵                                 ~~~~~~~~~~~~~~~~                                                                                                                                                                             
+0.642                                                                                                                                                                                                                                        
+0.642   You can mark the path "@clerk/express" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.                                                                          
+0.642 
+0.680 ✘ [ERROR] Could not resolve "http-proxy-middleware"
+0.680 
+0.680     src/middlewares/clerkProxyMiddleware.ts:19:38:
+0.680       19 │ import { createProxyMiddleware } from "http-proxy-middleware";
+0.680          ╵                                       ~~~~~~~~~~~~~~~~~~~~~~~
+0.680 
+0.680   You can mark the path "http-proxy-middleware" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+0.680 
+0.706 ✘ [ERROR] Could not resolve "@clerk/express"
+0.706 
+0.706     src/routes/restaurants.ts:2:24:
+0.706       2 │ import { getAuth } from "@clerk/express";
+0.706         ╵                         ~~~~~~~~~~~~~~~~
+0.706 
+0.706   You can mark the path "@clerk/express" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+0.706 
+0.895 3 errors
+0.900 Error: Build failed with 3 errors:
+0.900 src/app.ts:4:32: ERROR: Could not resolve "@clerk/express"
+0.900 src/middlewares/clerkProxyMiddleware.ts:19:38: ERROR: Could not resolve "http-proxy-middleware"
+0.900 src/routes/restaurants.ts:2:24: ERROR: Could not resolve "@clerk/express"
+0.900     at failureErrorWithLog (/app/node_modules/esbuild/lib/main.js:1467:15)
+0.900     at /app/node_modules/esbuild/lib/main.js:926:25
+0.900     at /app/node_modules/esbuild/lib/main.js:1345:9
+0.900     at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+0.900   errors: [Getter/Setter],
+0.900   warnings: [Getter/Setter]
+0.900 }
+------
+Dockerfile:30
