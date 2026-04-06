@@ -19,6 +19,7 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
   const queryClient = useQueryClient();
   const createMutation = useCreateRestaurant();
   const updateMutation = useUpdateRestaurant();
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
@@ -33,6 +34,7 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.concelho || !formData.district) return;
+    setError(null);
 
     try {
       if (initialData) {
@@ -42,8 +44,9 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
       }
       queryClient.invalidateQueries({ queryKey: getListRestaurantsQueryKey() });
       onSuccess();
-    } catch (error) {
-      console.error("Error saving restaurant", error);
+    } catch (err: any) {
+      console.error("Error saving restaurant", err);
+      setError(err?.data?.error || err?.message || "Erro ao guardar. Tenta novamente.");
     }
   };
 
@@ -134,7 +137,11 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
         />
       </div>
 
-      <div className="pt-4 flex justify-end gap-3">
+      {error && (
+        <p className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2">{error}</p>
+      )}
+
+      <div className="pt-2 flex justify-end gap-3">
         <Button type="button" variant="ghost" onClick={onSuccess}>Cancelar</Button>
         <Button type="submit" disabled={isPending}>
           {isPending ? "A Guardar..." : initialData ? "Atualizar" : "Guardar Restaurante"}
@@ -147,6 +154,7 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
 export function WishlistForm({ onSuccess, defaultConcelho }: { onSuccess: () => void, defaultConcelho?: string }) {
   const queryClient = useQueryClient();
   const createMutation = useCreateWishlistItem();
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -159,13 +167,15 @@ export function WishlistForm({ onSuccess, defaultConcelho }: { onSuccess: () => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.concelho || !formData.district) return;
+    setError(null);
 
     try {
       await createMutation.mutateAsync({ data: formData });
       queryClient.invalidateQueries({ queryKey: getListWishlistQueryKey() });
       onSuccess();
-    } catch (error) {
-      console.error("Error adding to wishlist", error);
+    } catch (err: any) {
+      console.error("Error adding to wishlist", err);
+      setError(err?.data?.error || err?.message || "Erro ao guardar. Tenta novamente.");
     }
   };
 
@@ -226,7 +236,11 @@ export function WishlistForm({ onSuccess, defaultConcelho }: { onSuccess: () => 
         />
       </div>
 
-      <div className="pt-4 flex justify-end gap-3">
+      {error && (
+        <p className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2">{error}</p>
+      )}
+
+      <div className="pt-2 flex justify-end gap-3">
         <Button type="button" variant="ghost" onClick={onSuccess}>Cancelar</Button>
         <Button type="submit" disabled={createMutation.isPending}>
           {createMutation.isPending ? "A Guardar..." : "Adicionar à Wishlist"}
