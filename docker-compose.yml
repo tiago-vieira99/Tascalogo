@@ -19,7 +19,7 @@ services:
         - linux/amd64
     environment:
       DATABASE_URL: postgresql://tascalogo:tascalogo_password@db:5432/tascalogo
-    command: pnpm --filter @workspace/db run push
+    command: pnpm --filter @workspace/db run push-force
     depends_on:
       db:
         condition: service_healthy

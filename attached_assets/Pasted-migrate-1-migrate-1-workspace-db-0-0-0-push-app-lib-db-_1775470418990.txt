@@ -1,0 +1,33 @@
+migrate-1  | 
+migrate-1  | > @workspace/db@0.0.0 push /app/lib/db
+migrate-1  | > drizzle-kit push --config ./drizzle.config.ts
+migrate-1  | 
+migrate-1  | Reading config file '/app/lib/db/drizzle.config.ts'
+migrate-1  | Using 'pg' driver for database querying
+migrate-1  | [⣷] Pulling schema from database...
+[⣯] Pulling schema from database...
+[⣟] Pulling schema from database...
+[⡿] Pulling schema from database...
+[⢿] Pulling schema from database...
+[✓] Pulling schema from database...
+migrate-1  | Error: Interactive prompts require a TTY terminal (process.stdin.isTTY or process.stdout.isTTY is false). This can happen when running in CI, piped input, or non-interactive shells.
+migrate-1  |     at render10 (/app/node_modules/drizzle-kit/bin.cjs:1450:31)
+migrate-1  |     at promptNamedWithSchemasConflict (/app/node_modules/drizzle-kit/bin.cjs:32812:65)
+migrate-1  |     at tablesResolver (/app/node_modules/drizzle-kit/bin.cjs:32001:60)
+migrate-1  |     at applyPgSnapshotsDiff (/app/node_modules/drizzle-kit/bin.cjs:28212:17)
+migrate-1  |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+migrate-1  |     at async preparePgPush (/app/node_modules/drizzle-kit/bin.cjs:32257:52)
+migrate-1  |     at async pgPush (/app/node_modules/drizzle-kit/bin.cjs:82708:26)
+migrate-1  |     at async Object.handler (/app/node_modules/drizzle-kit/bin.cjs:92226:9)
+migrate-1  |     at async run (/app/node_modules/drizzle-kit/bin.cjs:91472:7)
+migrate-1  | Error: Interactive prompts require a TTY terminal (process.stdin.isTTY or process.stdout.isTTY is false). This can happen when running in CI, piped input, or non-interactive shells.
+migrate-1  |     at render10 (/app/node_modules/drizzle-kit/bin.cjs:1450:31)
+migrate-1  |     at promptNamedWithSchemasConflict (/app/node_modules/drizzle-kit/bin.cjs:32812:65)
+migrate-1  |     at tablesResolver (/app/node_modules/drizzle-kit/bin.cjs:32001:60)
+migrate-1  |     at applyPgSnapshotsDiff (/app/node_modules/drizzle-kit/bin.cjs:28212:17)
+migrate-1  |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+migrate-1  |     at async preparePgPush (/app/node_modules/drizzle-kit/bin.cjs:32257:52)
+migrate-1  |     at async pgPush (/app/node_modules/drizzle-kit/bin.cjs:82708:26)
+migrate-1  |     at async Object.handler (/app/node_modules/drizzle-kit/bin.cjs:92226:9)
+migrate-1  |     at async run (/app/node_modules/drizzle-kit/bin.cjs:91472:7)
+migrate-1 exited with code 0
