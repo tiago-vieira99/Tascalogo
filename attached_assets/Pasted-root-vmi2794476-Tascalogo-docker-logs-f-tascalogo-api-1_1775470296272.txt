@@ -1,0 +1,18 @@
+root@vmi2794476:~/Tascalogo# docker logs -f tascalogo-api-1
+{"level":40,"time":1775470020684,"pid":1,"hostname":"8a709655341d","frontendDist":"/app/artifacts/tascalogo/dist/public","msg":"Frontend dist not found – run 'pnpm --filter @workspace/tascalogo run build' first"}
+{"level":30,"time":1775470020695,"pid":1,"hostname":"8a709655341d","port":3001,"msg":"Server listening"}
+{"level":30,"time":1775470028088,"pid":1,"hostname":"8a709655341d","req":{"id":1,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":34,"msg":"request completed"}
+{"level":30,"time":1775470035404,"pid":1,"hostname":"8a709655341d","req":{"id":2,"method":"POST","url":"/api/auth/login"},"res":{"statusCode":200},"responseTime":906,"msg":"request completed"}
+error: relation "session" does not exist
+    at <anonymous> (/app/node_modules/pg-pool/index.js:45:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async PGStore._asyncQuery (/app/node_modules/connect-pg-simple/index.js:322:21)
+{"level":30,"time":1775470035637,"pid":1,"hostname":"8a709655341d","req":{"id":3,"method":"GET","url":"/api/restaurants"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
+{"level":30,"time":1775470035642,"pid":1,"hostname":"8a709655341d","req":{"id":4,"method":"GET","url":"/api/wishlist"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+{"level":30,"time":1775470035685,"pid":1,"hostname":"8a709655341d","req":{"id":5,"method":"GET","url":"/api/restaurants"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1775470035692,"pid":1,"hostname":"8a709655341d","req":{"id":6,"method":"GET","url":"/api/wishlist"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+{"level":30,"time":1775470044443,"pid":1,"hostname":"8a709655341d","req":{"id":7,"method":"GET","url":"/api/restaurants"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1775470044447,"pid":1,"hostname":"8a709655341d","req":{"id":8,"method":"GET","url":"/api/wishlist"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1775470046170,"pid":1,"hostname":"8a709655341d","req":{"id":9,"method":"GET","url":"/api/restaurants"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+{"level":30,"time":1775470046178,"pid":1,"hostname":"8a709655341d","req":{"id":10,"method":"GET","url":"/api/wishlist"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1775470071263,"pid":1,"hostname":"8a709655341d","req":{"id":11,"method":"POST","url":"/api/wishlist"},"res":{"statusCode":401},"responseTime":3,"msg":"request completed"}
