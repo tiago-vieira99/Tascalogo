@@ -75,7 +75,7 @@ function Routes() {
         <PublicRoute><Register /></PublicRoute>
       </Route>
       <Route path="/">
-        <ProtectedRoute><Home /></ProtectedRoute>
+        <Layout><Home /></Layout>
       </Route>
       <Route path="/restaurants">
         <ProtectedRoute><Directory /></ProtectedRoute>

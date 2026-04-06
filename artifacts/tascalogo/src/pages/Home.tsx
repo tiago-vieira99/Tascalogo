@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { PortugalMap } from "@/components/PortugalMap";
 import { Modal } from "@/components/ui/modal";
 import { RestaurantForm, WishlistForm } from "@/components/Forms";
@@ -8,6 +9,7 @@ import { Star, MapPin, Calendar, Trash2, Edit, CheckCircle2, X } from "lucide-re
 import { useListRestaurants, useListWishlist, useDeleteRestaurant, useDeleteWishlistItem, useMarkWishlistItemVisited } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getListRestaurantsQueryKey, getListWishlistQueryKey } from "@workspace/api-client-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function Home() {
   const [selectedConcelho, setSelectedConcelho] = useState<string | null>(null);

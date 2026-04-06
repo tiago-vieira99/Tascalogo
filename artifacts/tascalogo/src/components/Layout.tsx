@@ -50,28 +50,37 @@ export function Layout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {user && (
-          <div className="px-4 pb-6 border-t border-border/40 pt-4 mt-2">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-muted/50 mb-2">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                <User className="w-4 h-4 text-primary" />
+        <div className="px-4 pb-6 border-t border-border/40 pt-4 mt-2">
+          {user ? (
+            <>
+              <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-muted/50 mb-2">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {user.name || user.email.split("@")[0]}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
-                  {user.name || user.email.split("@")[0]}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-              </div>
-            </div>
-            <button
-              onClick={logout}
-              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:bg-muted hover:text-foreground transition-all duration-200 cursor-pointer"
-            >
-              <LogOut className="w-4 h-4 opacity-70" />
-              <span className="hidden sm:inline">Terminar sessão</span>
-            </button>
-          </div>
-        )}
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:bg-muted hover:text-foreground transition-all duration-200 cursor-pointer"
+              >
+                <LogOut className="w-4 h-4 opacity-70" />
+                <span className="hidden sm:inline">Terminar sessão</span>
+              </button>
+            </>
+          ) : (
+            <Link href="/login">
+              <span className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 cursor-pointer justify-center">
+                <User className="w-4 h-4" />
+                <span className="hidden sm:inline">Entrar</span>
+              </span>
+            </Link>
+          )}
+        </div>
       </aside>
 
       <main className="flex-1 max-w-[1600px] mx-auto w-full p-4 md:p-8 lg:p-10 overflow-y-auto">
