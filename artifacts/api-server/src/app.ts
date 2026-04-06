@@ -42,8 +42,9 @@ app.use("/api", router);
 
 // In production, serve the built frontend static files and handle SPA routing
 if (process.env.NODE_ENV === "production") {
-  // The frontend is built to artifacts/tascalogo/dist/public relative to monorepo root
-  const frontendDist = path.resolve(process.cwd(), "artifacts/tascalogo/dist/public");
+  // The frontend is built to artifacts/tascalogo/dist/public relative to monorepo root.
+  // process.cwd() in Docker is /app/artifacts/api-server, so we go up two levels.
+  const frontendDist = path.resolve(process.cwd(), "../../artifacts/tascalogo/dist/public");
 
   if (existsSync(frontendDist)) {
     logger.info({ frontendDist }, "Serving frontend static files");
