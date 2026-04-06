@@ -29,8 +29,9 @@ COPY artifacts/api-server/ artifacts/api-server/
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
 
-# Clerk proxy URL — nginx will proxy /__clerk/ to the api service
-ARG VITE_CLERK_PROXY_URL=/__clerk
+# Clerk proxy URL — only needed for production Clerk instances (pk_live_...).
+# Leave empty when using development keys (pk_test_...).
+ARG VITE_CLERK_PROXY_URL=
 ENV VITE_CLERK_PROXY_URL=$VITE_CLERK_PROXY_URL
 
 # Build the frontend
