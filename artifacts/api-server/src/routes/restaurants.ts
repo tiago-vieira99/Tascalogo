@@ -1,23 +1,19 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { getAuth } from "@clerk/express";
 import { db, restaurantsTable, wishlistTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 
 const router: IRouter = Router();
 
 function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const auth = getAuth(req);
-  const userId = auth?.userId;
-  if (!userId) {
+  if (!req.session.userId) {
     return res.status(401).json({ error: "Não autorizado" });
   }
-  (req as any).userId = userId;
   next();
 }
 
 router.get("/restaurants", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const { concelho } = req.query as { concelho?: string };
     const results = await (concelho
       ? db.select().from(restaurantsTable).where(and(eq(restaurantsTable.userId, userId), eq(restaurantsTable.concelho, concelho)))
@@ -41,7 +37,7 @@ router.get("/restaurants", requireAuth, async (req, res) => {
 
 router.post("/restaurants", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const { name, concelho, district, cuisine, rating, notes, visitDate } = req.body;
     if (!name || !concelho || !district) {
       return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
@@ -75,7 +71,7 @@ router.post("/restaurants", requireAuth, async (req, res) => {
 
 router.get("/restaurants/:id", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const id = Number(req.params.id);
     const [restaurant] = await db.select().from(restaurantsTable).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId)));
     if (!restaurant) {
@@ -100,7 +96,7 @@ router.get("/restaurants/:id", requireAuth, async (req, res) => {
 
 router.put("/restaurants/:id", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const id = Number(req.params.id);
     const { name, concelho, district, cuisine, rating, notes, visitDate } = req.body;
     if (!name || !concelho || !district) {
@@ -137,7 +133,7 @@ router.put("/restaurants/:id", requireAuth, async (req, res) => {
 
 router.delete("/restaurants/:id", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const id = Number(req.params.id);
     await db.delete(restaurantsTable).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId)));
     res.status(204).send();
@@ -149,7 +145,7 @@ router.delete("/restaurants/:id", requireAuth, async (req, res) => {
 
 router.get("/wishlist", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const { concelho } = req.query as { concelho?: string };
     const results = await (concelho
       ? db.select().from(wishlistTable).where(and(eq(wishlistTable.userId, userId), eq(wishlistTable.concelho, concelho)))
@@ -171,7 +167,7 @@ router.get("/wishlist", requireAuth, async (req, res) => {
 
 router.post("/wishlist", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const { name, concelho, district, cuisine, notes } = req.body;
     if (!name || !concelho || !district) {
       return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
@@ -201,7 +197,7 @@ router.post("/wishlist", requireAuth, async (req, res) => {
 
 router.delete("/wishlist/:id", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const id = Number(req.params.id);
     await db.delete(wishlistTable).where(and(eq(wishlistTable.id, id), eq(wishlistTable.userId, userId)));
     res.status(204).send();
@@ -213,7 +209,7 @@ router.delete("/wishlist/:id", requireAuth, async (req, res) => {
 
 router.get("/stats", requireAuth, async (req, res) => {
   try {
-    const userId = (req as any).userId as string;
+    const userId = String(req.session.userId);
     const restaurants = await db.select().from(restaurantsTable).where(eq(restaurantsTable.userId, userId));
     const wishlist = await db.select().from(wishlistTable).where(eq(wishlistTable.userId, userId));
 

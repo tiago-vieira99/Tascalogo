@@ -25,17 +25,8 @@ COPY lib/ lib/
 COPY scripts/ scripts/
 COPY artifacts/api-server/ artifacts/api-server/
 
-# Clerk publishable key is required at build time so Vite can embed it in the bundle
-ARG VITE_CLERK_PUBLISHABLE_KEY
-ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
-
-# Clerk proxy URL — only needed for production Clerk instances (pk_live_...).
-# Leave empty when using development keys (pk_test_...).
-ARG VITE_CLERK_PROXY_URL=
-ENV VITE_CLERK_PROXY_URL=$VITE_CLERK_PROXY_URL
-
 # Build the frontend
-# PORT is required by vite.config.ts at config load time (dev server port, not used in the build output)
+# PORT is required by vite.config.ts at config load time (not used in the build output)
 # BASE_PATH sets the base URL prefix for the app
 WORKDIR /app/artifacts/tascalogo
 RUN PORT=3000 BASE_PATH=/ pnpm run build

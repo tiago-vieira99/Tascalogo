@@ -75,7 +75,6 @@
     "zod": "catalog:"
   },
   "dependencies": {
-    "@clerk/react": "^6.1.4",
     "react-simple-maps": "^3.0.0"
   }
 }

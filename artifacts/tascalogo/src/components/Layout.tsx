@@ -1,13 +1,12 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
 import { Map, List, Star, BarChart3, UtensilsCrossed, LogOut, User } from "lucide-react";
-import { useClerk, useUser } from "@clerk/react";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
-  const { signOut } = useClerk();
-  const { user, isLoaded } = useUser();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { href: "/", label: "Mapa", icon: Map },
@@ -18,7 +17,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full">
-      {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 lg:w-72 bg-card border-r border-border/60 shrink-0 flex flex-col shadow-[4px_0_24px_rgb(0,0,0,0.02)] z-10">
         <div className="p-6 md:p-8">
           <Link href="/" className="flex items-center gap-3 text-primary group cursor-pointer">
@@ -52,32 +50,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {/* User section at bottom of sidebar */}
-        {isLoaded && user && (
+        {user && (
           <div className="px-4 pb-6 border-t border-border/40 pt-4 mt-2">
             <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-muted/50 mb-2">
-              {user.imageUrl ? (
-                <img
-                  src={user.imageUrl}
-                  alt={user.fullName || "Utilizador"}
-                  className="w-8 h-8 rounded-full object-cover shrink-0"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-primary" />
-                </div>
-              )}
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                <User className="w-4 h-4 text-primary" />
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
-                  {user.fullName || user.primaryEmailAddress?.emailAddress?.split("@")[0] || "Utilizador"}
+                  {user.name || user.email.split("@")[0]}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user.primaryEmailAddress?.emailAddress}
-                </p>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
             </div>
             <button
-              onClick={() => signOut({ redirectUrl: "/" })}
+              onClick={logout}
               className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-foreground/70 hover:bg-muted hover:text-foreground transition-all duration-200 cursor-pointer"
             >
               <LogOut className="w-4 h-4 opacity-70" />
@@ -87,7 +74,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 max-w-[1600px] mx-auto w-full p-4 md:p-8 lg:p-10 overflow-y-auto">
         {children}
       </main>
