@@ -13,7 +13,7 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
 
 router.get("/restaurants", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const { concelho } = req.query as { concelho?: string };
     const results = await (concelho
       ? db.select().from(restaurantsTable).where(and(eq(restaurantsTable.userId, userId), eq(restaurantsTable.concelho, concelho)))
@@ -37,7 +37,7 @@ router.get("/restaurants", requireAuth, async (req, res) => {
 
 router.post("/restaurants", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const { name, concelho, district, cuisine, rating, notes, visitDate } = req.body;
     if (!name || !concelho || !district) {
       return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
@@ -71,7 +71,7 @@ router.post("/restaurants", requireAuth, async (req, res) => {
 
 router.get("/restaurants/:id", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const id = Number(req.params.id);
     const [restaurant] = await db.select().from(restaurantsTable).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId)));
     if (!restaurant) {
@@ -96,7 +96,7 @@ router.get("/restaurants/:id", requireAuth, async (req, res) => {
 
 router.put("/restaurants/:id", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const id = Number(req.params.id);
     const { name, concelho, district, cuisine, rating, notes, visitDate } = req.body;
     if (!name || !concelho || !district) {
@@ -133,7 +133,7 @@ router.put("/restaurants/:id", requireAuth, async (req, res) => {
 
 router.delete("/restaurants/:id", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const id = Number(req.params.id);
     await db.delete(restaurantsTable).where(and(eq(restaurantsTable.id, id), eq(restaurantsTable.userId, userId)));
     res.status(204).send();
@@ -145,7 +145,7 @@ router.delete("/restaurants/:id", requireAuth, async (req, res) => {
 
 router.get("/wishlist", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const { concelho } = req.query as { concelho?: string };
     const results = await (concelho
       ? db.select().from(wishlistTable).where(and(eq(wishlistTable.userId, userId), eq(wishlistTable.concelho, concelho)))
@@ -167,7 +167,7 @@ router.get("/wishlist", requireAuth, async (req, res) => {
 
 router.post("/wishlist", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const { name, concelho, district, cuisine, notes } = req.body;
     if (!name || !concelho || !district) {
       return res.status(400).json({ error: "name, concelho e district são obrigatórios" });
@@ -197,7 +197,7 @@ router.post("/wishlist", requireAuth, async (req, res) => {
 
 router.delete("/wishlist/:id", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const id = Number(req.params.id);
     await db.delete(wishlistTable).where(and(eq(wishlistTable.id, id), eq(wishlistTable.userId, userId)));
     res.status(204).send();
@@ -209,7 +209,7 @@ router.delete("/wishlist/:id", requireAuth, async (req, res) => {
 
 router.get("/stats", requireAuth, async (req, res) => {
   try {
-    const userId = String(req.session.userId);
+    const userId = req.session.userId as number;
     const restaurants = await db.select().from(restaurantsTable).where(eq(restaurantsTable.userId, userId));
     const wishlist = await db.select().from(wishlistTable).where(eq(wishlistTable.userId, userId));
 
