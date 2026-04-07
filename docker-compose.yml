@@ -1,14 +1,38 @@
 services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=tiagoabvieira@gmail.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "letsencrypt:/letsencrypt"
+
   web:
     build:
       context: .
       dockerfile: artifacts/tascalogo/Dockerfile
       platforms:
         - linux/amd64
-    ports:
-      - "80:80"
     depends_on:
       - api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tascalogo.rule=Host(`tascalogo.duckdns.org`)"
+      - "traefik.http.routers.tascalogo.entrypoints=websecure"
+      - "traefik.http.routers.tascalogo.tls.certresolver=letsencrypt"
+      - "traefik.http.services.tascalogo.loadbalancer.server.port=80"
 
   migrate:
     build:
@@ -36,7 +60,7 @@ services:
       NODE_ENV: production
       DATABASE_URL: postgresql://tascalogo:tascalogo_password@db:5432/tascalogo
       SESSION_SECRET: ${SESSION_SECRET}
-      SESSION_SECURE: "false"
+      SESSION_SECURE: "true"
     ports:
       - "3001:3001"
     depends_on:
@@ -59,11 +83,6 @@ services:
       timeout: 5s
       retries: 10
 
-  tunnel:
-    image: cloudflare/cloudflared:latest
-    command: tunnel --no-autoupdate --url http://web:80
-    depends_on:
-      - web
-
 volumes:
   postgres_data:
+  letsencrypt:
