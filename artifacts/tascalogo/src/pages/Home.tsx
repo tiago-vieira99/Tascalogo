@@ -13,12 +13,16 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export function Home() {
   const [selectedConcelho, setSelectedConcelho] = useState<string | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
   const [isRestaurantModalOpen, setIsRestaurantModalOpen] = useState(false);
   const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
   const [markingVisitedId, setMarkingVisitedId] = useState<number | null>(null);
   const [visitRating, setVisitRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
+
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
 
   const { data: restaurants } = useListRestaurants({ concelho: selectedConcelho || undefined });
   const { data: wishlist } = useListWishlist({ concelho: selectedConcelho || undefined });
@@ -70,7 +74,10 @@ export function Home() {
         </header>
         <PortugalMap
           selectedConcelho={selectedConcelho}
-          onSelectConcelho={setSelectedConcelho}
+          onSelectConcelho={(concelho, district) => {
+            setSelectedConcelho(concelho);
+            setSelectedDistrict(district);
+          }}
         />
       </div>
 
@@ -85,10 +92,10 @@ export function Home() {
               </div>
               <h3 className="text-3xl font-serif font-bold text-foreground">{selectedConcelho}</h3>
               <div className="flex gap-4 mt-4">
-                <Button size="sm" onClick={() => setIsRestaurantModalOpen(true)} className="flex-1">
+                <Button size="sm" onClick={() => user ? setIsRestaurantModalOpen(true) : navigate("/login")} className="flex-1">
                   + Visitei
                 </Button>
-                <Button size="sm" variant="secondary" onClick={() => setIsWishlistModalOpen(true)} className="flex-1">
+                <Button size="sm" variant="secondary" onClick={() => user ? setIsWishlistModalOpen(true) : navigate("/login")} className="flex-1">
                   + Wishlist
                 </Button>
               </div>
@@ -240,6 +247,7 @@ export function Home() {
         <RestaurantForm
           initialData={editingRestaurant}
           defaultConcelho={selectedConcelho || ""}
+          defaultDistrict={selectedDistrict}
           onSuccess={() => { setIsRestaurantModalOpen(false); setEditingRestaurant(null); }}
         />
       </Modal>
@@ -251,6 +259,7 @@ export function Home() {
       >
         <WishlistForm
           defaultConcelho={selectedConcelho || ""}
+          defaultDistrict={selectedDistrict}
           onSuccess={() => setIsWishlistModalOpen(false)}
         />
       </Modal>

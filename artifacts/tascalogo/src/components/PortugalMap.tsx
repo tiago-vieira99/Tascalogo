@@ -4,27 +4,60 @@ import { useListRestaurants, useListWishlist } from "@workspace/api-client-react
 
 const GEO_URL = "/concelhos.geojson";
 
+const DISTRICT_MAP: Record<string, string> = {
+  "Aveiro": "Aveiro",
+  "Azores": "Açores",
+  "Beja": "Beja",
+  "Braga": "Braga",
+  "Bragança": "Bragança",
+  "CasteloBranco": "Castelo Branco",
+  "Coimbra": "Coimbra",
+  "Évora": "Évora",
+  "Faro": "Faro",
+  "Guarda": "Guarda",
+  "Leiria": "Leiria",
+  "Lisboa": "Lisboa",
+  "Madeira": "Madeira",
+  "Portalegre": "Portalegre",
+  "Porto": "Porto",
+  "Santarém": "Santarém",
+  "Setúbal": "Setúbal",
+  "VianadoCastelo": "Viana do Castelo",
+  "VilaReal": "Vila Real",
+  "Viseu": "Viseu",
+};
+
+function formatGeoName(name: string): string {
+  if (!name) return name;
+  return name
+    .replace(/([A-ZÁÉÍÓÚÀÂÊÔÃÕÇ])(?=[a-záéíóúàâêôãõçü])/g, " $1")
+    .trim();
+}
+
+function normalizeKey(s: string): string {
+  return s.toUpperCase().replace(/\s/g, "");
+}
+
 interface PortugalMapProps {
   selectedConcelho: string | null;
-  onSelectConcelho: (name: string) => void;
+  onSelectConcelho: (concelho: string, district: string) => void;
 }
 
 export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapProps) {
   const { data: restaurants } = useListRestaurants();
   const { data: wishlist } = useListWishlist();
 
-  // Calculate stats per concelho to drive map colors
   const concelhoStats = useMemo(() => {
     const stats: Record<string, { visited: number, wishlist: number }> = {};
 
     restaurants?.forEach(r => {
-      const c = r.concelho.toUpperCase();
+      const c = normalizeKey(r.concelho);
       if (!stats[c]) stats[c] = { visited: 0, wishlist: 0 };
       stats[c].visited += 1;
     });
 
     wishlist?.forEach(w => {
-      const c = w.concelho.toUpperCase();
+      const c = normalizeKey(w.concelho);
       if (!stats[c]) stats[c] = { visited: 0, wishlist: 0 };
       stats[c].wishlist += 1;
     });
@@ -46,12 +79,15 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
           <Geographies geography={GEO_URL}>
             {({ geographies }) =>
               geographies.map((geo) => {
-                const concelhoName = geo.properties.NAME_2;
-                const normalizedName = concelhoName?.toUpperCase() || "";
-                const stats = concelhoStats[normalizedName];
-                const isSelected = selectedConcelho?.toUpperCase() === normalizedName;
+                const rawName = geo.properties.NAME_2;
+                const rawDistrict = geo.properties.NAME_1;
+                const concelhoName = formatGeoName(rawName);
+                const districtName = DISTRICT_MAP[rawDistrict] || formatGeoName(rawDistrict);
 
-                // Determine fill color
+                const normalizedName = normalizeKey(rawName || "");
+                const stats = concelhoStats[normalizedName];
+                const isSelected = normalizeKey(selectedConcelho || "") === normalizedName;
+
                 let fill = "hsl(var(--card))";
                 let stroke = "hsl(var(--border))";
                 let strokeWidth = 0.5;
@@ -61,7 +97,6 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
                   stroke = "hsl(var(--primary))";
                   strokeWidth = 1.5;
                 } else if (stats?.visited > 0) {
-                  // The more visited, the darker the terracotta
                   const opacity = Math.min(0.4 + (stats.visited * 0.15), 1);
                   fill = `hsl(var(--primary) / ${opacity})`;
                   stroke = "hsl(var(--primary))";
@@ -74,7 +109,7 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
                   <Geography
                     key={geo.rsmKey}
                     geography={geo}
-                    onClick={() => onSelectConcelho(concelhoName)}
+                    onClick={() => onSelectConcelho(concelhoName, districtName)}
                     style={{
                       default: {
                         fill,

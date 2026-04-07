@@ -13,9 +13,10 @@ interface RestaurantFormProps {
   initialData?: Restaurant;
   onSuccess: () => void;
   defaultConcelho?: string;
+  defaultDistrict?: string;
 }
 
-export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: RestaurantFormProps) {
+export function RestaurantForm({ initialData, onSuccess, defaultConcelho, defaultDistrict }: RestaurantFormProps) {
   const queryClient = useQueryClient();
   const createMutation = useCreateRestaurant();
   const updateMutation = useUpdateRestaurant();
@@ -24,7 +25,7 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
     concelho: initialData?.concelho || defaultConcelho || "",
-    district: initialData?.district || "",
+    district: initialData?.district || defaultDistrict || "",
     cuisine: initialData?.cuisine || "",
     rating: initialData?.rating || 0,
     notes: initialData?.notes || "",
@@ -151,7 +152,7 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho }: Rest
   );
 }
 
-export function WishlistForm({ onSuccess, defaultConcelho }: { onSuccess: () => void, defaultConcelho?: string }) {
+export function WishlistForm({ onSuccess, defaultConcelho, defaultDistrict }: { onSuccess: () => void, defaultConcelho?: string, defaultDistrict?: string }) {
   const queryClient = useQueryClient();
   const createMutation = useCreateWishlistItem();
   const [error, setError] = useState<string | null>(null);
@@ -159,7 +160,7 @@ export function WishlistForm({ onSuccess, defaultConcelho }: { onSuccess: () => 
   const [formData, setFormData] = useState({
     name: "",
     concelho: defaultConcelho || "",
-    district: "",
+    district: defaultDistrict || "",
     cuisine: "",
     notes: ""
   });
