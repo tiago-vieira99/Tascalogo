@@ -51,13 +51,13 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
     const stats: Record<string, { visited: number, wishlist: number }> = {};
 
     restaurants?.forEach(r => {
-      const c = normalizeKey(r.concelho);
+      const c = r.concelho.toUpperCase();
       if (!stats[c]) stats[c] = { visited: 0, wishlist: 0 };
       stats[c].visited += 1;
     });
 
     wishlist?.forEach(w => {
-      const c = normalizeKey(w.concelho);
+      const c = w.concelho.toUpperCase();
       if (!stats[c]) stats[c] = { visited: 0, wishlist: 0 };
       stats[c].wishlist += 1;
     });
@@ -81,12 +81,11 @@ export function PortugalMap({ selectedConcelho, onSelectConcelho }: PortugalMapP
               geographies.map((geo) => {
                 const rawName = geo.properties.NAME_2;
                 const rawDistrict = geo.properties.NAME_1;
-                const concelhoName = formatGeoName(rawName);
-                const districtName = DISTRICT_MAP[rawDistrict] || formatGeoName(rawDistrict);
-
-                const normalizedName = normalizeKey(rawName || "");
+                const districtName = DISTRICT_MAP[rawDistrict];
+                const concelhoName = geo.properties.NAME_2;
+                const normalizedName = concelhoName?.toUpperCase() || "";
                 const stats = concelhoStats[normalizedName];
-                const isSelected = normalizeKey(selectedConcelho || "") === normalizedName;
+                const isSelected = selectedConcelho?.toUpperCase() === normalizedName;
 
                 let fill = "hsl(var(--card))";
                 let stroke = "hsl(var(--border))";
