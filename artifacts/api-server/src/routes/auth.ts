@@ -31,7 +31,13 @@ router.post("/auth/register", async (req, res) => {
     req.session.userEmail = user.email;
     req.session.userName = user.name ?? undefined;
 
-    res.status(201).json({ id: user.id, email: user.email, name: user.name });
+    req.session.save((err) => {
+      if (err) {
+        req.log.error({ err }, "Error saving session");
+        return res.status(500).json({ error: "Erro interno" });
+      }
+      res.status(201).json({ id: user.id, email: user.email, name: user.name });
+    });
   } catch (err) {
     req.log.error({ err }, "Error registering user");
     res.status(500).json({ error: "Erro interno" });
@@ -59,7 +65,13 @@ router.post("/auth/login", async (req, res) => {
     req.session.userEmail = user.email;
     req.session.userName = user.name ?? undefined;
 
-    res.json({ id: user.id, email: user.email, name: user.name });
+    req.session.save((err) => {
+      if (err) {
+        req.log.error({ err }, "Error saving session");
+        return res.status(500).json({ error: "Erro interno" });
+      }
+      res.json({ id: user.id, email: user.email, name: user.name });
+    });
   } catch (err) {
     req.log.error({ err }, "Error logging in");
     res.status(500).json({ error: "Erro interno" });
