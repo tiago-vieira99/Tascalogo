@@ -6,7 +6,7 @@ const router: IRouter = Router();
 
 function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!req.session.userId) {
-    return res.status(401).json({ error: "Não autorizado" });
+    return res.status(401).json({ error: "Não Autorizado. Por favor faça Login!" });
   }
   next();
 }
