@@ -68,6 +68,17 @@ export default defineConfig({
     port,
     host: "0.0.0.0",
     allowedHosts: true,
+    // In Replit, the preview runs inside an iframe — proxy /api to the API
+    // server so cookies work correctly (avoids cross-site SameSite issues).
+    // In Docker, nginx handles this routing instead.
+    ...(isReplit && {
+      proxy: {
+        "/api": {
+          target: "http://localhost:8080",
+          changeOrigin: true,
+        },
+      },
+    }),
     fs: {
       strict: true,
       deny: ["**/.*"],
