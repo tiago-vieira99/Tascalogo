@@ -59,5 +59,11 @@ services:
       timeout: 5s
       retries: 10
 
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://web:80
+    depends_on:
+      - web
+
 volumes:
   postgres_data:
