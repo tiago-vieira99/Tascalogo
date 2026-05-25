@@ -9,6 +9,65 @@ import { Star } from "lucide-react";
 import { getListRestaurantsQueryKey, getListWishlistQueryKey } from "@workspace/api-client-react";
 import type { Restaurant } from "@workspace/api-client-react/src/generated/api.schemas";
 
+interface HalfStarPickerProps {
+  value: number;
+  onChange: (v: number) => void;
+  size?: "sm" | "lg";
+}
+
+export function HalfStarPicker({ value, onChange, size = "lg" }: HalfStarPickerProps) {
+  const [hover, setHover] = useState(0);
+  const starSize = size === "lg" ? "w-8 h-8" : "w-6 h-6";
+  const display = hover || value;
+
+  function handleMouseMove(e: React.MouseEvent<HTMLButtonElement>, star: number) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const half = (e.clientX - rect.left) < rect.width / 2;
+    setHover(half ? star - 0.5 : star);
+  }
+
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>, star: number) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const half = (e.clientX - rect.left) < rect.width / 2;
+    const next = half ? star - 0.5 : star;
+    onChange(next === value ? 0 : next);
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map(star => {
+        const full = display >= star;
+        const half = !full && display >= star - 0.5;
+        return (
+          <button
+            key={star}
+            type="button"
+            onMouseMove={e => handleMouseMove(e, star)}
+            onMouseLeave={() => setHover(0)}
+            onClick={e => handleClick(e, star)}
+            className="relative focus:outline-none transition-transform hover:scale-110 active:scale-95"
+          >
+            {/* background empty star */}
+            <Star className={`${starSize} text-border stroke-[1.5px]`} />
+            {/* filled overlay — clip to left half or full */}
+            {(full || half) && (
+              <span
+                className="absolute inset-0 overflow-hidden"
+                style={{ width: half ? "50%" : "100%" }}
+              >
+                <Star className={`${starSize} fill-primary text-primary`} />
+              </span>
+            )}
+          </button>
+        );
+      })}
+      {display > 0 && (
+        <span className="text-sm text-muted-foreground ml-2 tabular-nums">{display}/5</span>
+      )}
+    </div>
+  );
+}
+
 interface RestaurantFormProps {
   initialData?: Restaurant;
   onSuccess: () => void;
@@ -113,20 +172,7 @@ export function RestaurantForm({ initialData, onSuccess, defaultConcelho, defaul
 
       <div>
         <label className="block text-sm font-medium mb-1.5 text-foreground/80">Avaliação</label>
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              onClick={() => setFormData(p => ({ ...p, rating: star }))}
-              className="focus:outline-none transition-transform hover:scale-110 active:scale-95"
-            >
-              <Star 
-                className={`w-8 h-8 ${formData.rating >= star ? 'fill-primary text-primary' : 'text-border stroke-[1.5px]'}`} 
-              />
-            </button>
-          ))}
-        </div>
+        <HalfStarPicker value={formData.rating} onChange={v => setFormData(p => ({ ...p, rating: v }))} size="lg" />
       </div>
 
       <div>

@@ -5,7 +5,8 @@ import { Modal } from "@/components/ui/modal";
 import { RestaurantForm, WishlistForm } from "@/components/Forms";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, MapPin, Calendar, Trash2, Edit, CheckCircle2, X } from "lucide-react";
+import { MapPin, Calendar, Trash2, Edit, CheckCircle2, X } from "lucide-react";
+import { HalfStarPicker } from "@/components/Forms";
 import { useListRestaurants, useListWishlist, useDeleteRestaurant, useDeleteWishlistItem, useMarkWishlistItemVisited } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getListRestaurantsQueryKey, getListWishlistQueryKey } from "@workspace/api-client-react";
@@ -19,7 +20,6 @@ export function Home() {
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
   const [markingVisitedId, setMarkingVisitedId] = useState<number | null>(null);
   const [visitRating, setVisitRating] = useState<number>(0);
-  const [hoverRating, setHoverRating] = useState<number>(0);
 
   const { user } = useAuth();
   const [, navigate] = useLocation();
@@ -56,13 +56,11 @@ export function Home() {
     queryClient.invalidateQueries({ queryKey: getListWishlistQueryKey() });
     setMarkingVisitedId(null);
     setVisitRating(0);
-    setHoverRating(0);
   };
 
   const openMarkVisited = (id: number) => {
     setMarkingVisitedId(id);
     setVisitRating(0);
-    setHoverRating(0);
   };
 
   return (
@@ -171,27 +169,8 @@ export function Home() {
                         {markingVisitedId === w.id ? (
                           <div className="mt-3 pt-3 border-t border-border/50">
                             <p className="text-xs font-semibold text-muted-foreground mb-2">Dá uma pontuação (opcional):</p>
-                            <div className="flex items-center gap-1 mb-3">
-                              {[1, 2, 3, 4, 5].map(star => (
-                                <button
-                                  key={star}
-                                  onClick={() => setVisitRating(star === visitRating ? 0 : star)}
-                                  onMouseEnter={() => setHoverRating(star)}
-                                  onMouseLeave={() => setHoverRating(0)}
-                                  className="transition-transform hover:scale-110"
-                                >
-                                  <Star
-                                    className={`w-6 h-6 transition-colors ${
-                                      star <= (hoverRating || visitRating)
-                                        ? "fill-yellow-400 text-yellow-400"
-                                        : "text-muted-foreground/40"
-                                    }`}
-                                  />
-                                </button>
-                              ))}
-                              {visitRating > 0 && (
-                                <span className="text-xs text-muted-foreground ml-1">{visitRating}/5</span>
-                              )}
+                            <div className="mb-3">
+                              <HalfStarPicker value={visitRating} onChange={setVisitRating} size="sm" />
                             </div>
                             <div className="flex gap-2">
                               <Button
