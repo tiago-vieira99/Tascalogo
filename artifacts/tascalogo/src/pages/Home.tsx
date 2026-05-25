@@ -5,7 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import { RestaurantForm, WishlistForm } from "@/components/Forms";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MapPin, Calendar, Trash2, Edit, CheckCircle2, X } from "lucide-react";
+import { Star, MapPin, Calendar, Trash2, Edit, CheckCircle2, X } from "lucide-react";
 import { HalfStarPicker } from "@/components/Forms";
 import { useListRestaurants, useListWishlist, useDeleteRestaurant, useDeleteWishlistItem, useMarkWishlistItemVisited } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
